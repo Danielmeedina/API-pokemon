@@ -1,4 +1,4 @@
-import {testimonio} from "../stylesheets/testimonio.css"
+import "../stylesheets/testimonio.css"
 
 
 
