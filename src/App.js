@@ -1,40 +1,57 @@
 import './App.css';
-import Testimonio from './componentes/testimonios';
+import { useState, useEffect } from 'react'
+import Pokemon from "./components/pokemon"
+import SalaEspera from './components/SalaEspera';
+
 
 function App() {
-  return (
-    <div className="App">
-      <h2>Esto es lo que dicen nuestros alumnos sobre freecodecamp: </h2>
-      <div className="contenedor-principal">
-        <Testimonio
-        nombreImg ="shawn"
-        nombre ="Shanw Wang"
-        ciudad ="Singapore"
-        carrera ="Software Engineer"
-        empresa ="Amazon"
-        testimonio ="It's scary to change careers. I only gained confidence that I could code by working through the hundreds of hours of free lessons on freeCodeCamp. Within a year I had a six-figure job as a Software Engineer. freeCodeCamp changed my life."
-        />
-        <Testimonio
-        nombreImg ="sarah"
-        nombre ="Sarah Chima"
-        ciudad ="Nigeria"
-        carrera ="Software Engineer"
-        empresa ="ChatDesk"
-        testimonio ="freeCodeCamp was the gateway to my career as a software developer. The well-structured curriculum took my coding knowledge from a total beginner level to a very confident level. It was everything I needed to land my first dev job at an amazing company."
-        />
-        <Testimonio
-        nombreImg ="Emma"
-        nombre ="Emma Bostian"
-        ciudad ="Sweden"
-        carrera ="Software Engineer"
-        empresa ="Spotify"
-        testimonio ="I've always struggled with learning JavaScript. I've taken many courses but freeCodeCamp's course was the one which stuck. Studying JavaScript as well as data structures and algorithms on freeCodeCamp gave me the skills and confidence I needed to land my dream job as a software engineer at Spotify."
-        />
-      </div>
-      
 
+  const [pokemons, setPokemons] = useState([])
+  const [visible, setVisible] = useState(false)
+  
+  useEffect(() => {
+    const getPokemons = async (url) =>{
+      const data = await fetch(url);
+      const json = await data.json();
+  
+      json.results.forEach(async (el) => {
+        let res = await fetch(el.url),
+         json = await res.json();
+         console.log(json)
+  
+         let pokemon = {
+          id: crypto.randomUUID(),
+          name: json.name,
+          avatar: json.sprites.other.dream_world.front_default,
+         };
+        
+         setPokemons((pokemons) => [...pokemons, pokemon]);
+
+      })
+    }
+    visible && getPokemons("https://pokeapi.co/api/v2/pokemon/");
+
+  }, [visible])     
+  
+  const mostrarPokemons = () => setVisible(true)
+
+
+  return (
+    <div className="contenedor-principal">
+      <h1>POKEMONS</h1>
+      <div className="contenedor-pokemons">
+        {
+          visible === false
+          ?(<SalaEspera mostrarPokemons={mostrarPokemons} />)            
+          :(pokemons.map((el) =>(
+            <Pokemon key={el.id} name={el.name} avatar={el.avatar} />
+          )))
+        }
+      </div>
     </div>
   );
 }
 
 export default App;
+
+
